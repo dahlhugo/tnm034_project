@@ -9,20 +9,20 @@ the program should recognize this and deny access.
  **Submission Thursday 14 December, both program code and Report**
  
  Internal deadlines?
-  - Done Research/Prework - TBD
+  - Done Research/Prework - 16/11
   - Done with Part 1 and 2 - TBD
   - Combine Part 1 and 2 - TBD
-  - Done with code - TBD
-  - First report draft - TBD
-  - Final draft/hand in - TBD
+  - Done with code - Prel 30/11
+  - First report draft - 8/12
+  - Final draft/hand in - 13/12
   
 ## Face Recognition Pipeline
-Part 1:
+Part 1: Molly & Besse
  - Face Detection
  - Face alignment
  - Appearance Normalization
 
-Part 2:
+Part 2: Uma & Hugo
  - Feature Description
  - Feature Extraction
  - Matching
