@@ -1,4 +1,4 @@
-location = 'S:\TNM034\tnm034_project\DB1\DB1\db\*.jpg';       %  folder in which your images exists
+location = './DB1/DB1/db/*.jpg';       %  folder in which your images exists
 ds = imageDatastore(location)         %  Creates a datastore for all images in your folder
 
 
@@ -20,7 +20,6 @@ while hasdata (ds)
     image = reshape(image, [], 1);
     imVec(:, end + 1) = image;
 end
-imVec
 
 % Find average face vector
 M = 4;
@@ -39,8 +38,12 @@ C = diff'*diff;
 [V,D] = eig(C);
 
 % Finding weight (for every eigenface)
-eigenface_images = reshape(V, 250, 250, []);
-
+W = zeros(4, 187500)
+for j = 1:4    
+    W = V(:,j) * diff(:,j)';
+end
+H = W(1, :)';
+mat = reshape(H, [250, 250]))
 % Project image on our eigenspace
 % To classify - smallest distance 
 % Threshold  (based on distance)
