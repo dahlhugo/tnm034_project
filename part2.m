@@ -34,24 +34,34 @@ for i = 1:4
 end
 
 % Find covariance matrix C - (A^T)*A 
-C = diff'*diff;
+C = cov(diff);
 
 % Find the best eigenvectors 
 [V,D] = eig(C);
 
-% Finding weight (for every eigenface)
+%% Finding weight (for every eigenface)
 W = zeros(n, 4);
 for j = 1:4    
-    W = V(:,j) * diff(j,:);
+    W(:,j) = V(:,j)' * diff(j,:)';
 end
+%%
+colormap gray
+imagesc(reshape(meanFace, [250, 250]))
 
-W = W';
-%Reconstruction
+for i = 1:4
+   subplot(4, 4, i + 1)
+   imagesc(reshape(V(:, i), 250, []))
+end
+%% Reconstruction
 I = zeros(n, 4);
 for i = 1:4
-    I(:, i) = 
+    I(:, i) = meanFace + sum(W(:,i)*V(:,i));
 end
 
+while hasdata(I)
+    imshow(I);
+    figure;
+end
 
 % Project image on our eigenspace
 % To classify - smallest distance 
