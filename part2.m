@@ -45,26 +45,65 @@ for j = 1:4
     W(:,j) = V(:,j)' * diff(j,:)';
 end
 %%
-colormap gray
-imagesc(reshape(meanFace, [250, 250]))
-
-for i = 1:4
-   subplot(4, 4, i + 1)
-   imagesc(reshape(V(:, i), 250, []))
-end
+% colormap gray
+% imagesc(reshape(meanFace, [250, 250]))
+% 
+% for i = 1:4
+%    subplot(4, 4, i + 1)
+%    imagesc(reshape(V(:, i), 250, []))
+% end
 %% Reconstruction
-I = zeros(n, 4);
-for i = 1:4
-    I(:, i) = meanFace + sum(W(:,i)*V(:,i));
-end
-
-while hasdata(I)
-    imshow(I);
-    figure;
-end
+% I = zeros(n, 4);
+% for i = 1:4
+%     I(:, i) = meanFace + sum(W(:,i)*V(:,i));
+% end
+% 
+% while hasdata(I)
+%     imshow(I);
+%     figure;
+% end
 
 % Project image on our eigenspace
-% To classify - smallest distance 
+
+%% To classify - smallest distance 
+
+test = imread('.\DB2\test2.jpg');
+testImage = im2gray(test);
+testImage = im2double(testImage);
+testImage = reshape(testImage, [], 1);
+
+ inW = testImage(:, 1);
+
+
+
+index = 1;
+E = 9000;
+for i = 1:4
+    
+    temp = norm(inW - W(:, i));
+    
+    if temp < E
+        E = temp
+        index = i
+    end
+    
+end
+
+
+threshold = 50;
+% Might need to be changed depending on other images of the same person
+if E >= threshold
+        disp('no match found')
+        
+else
+    disp('match found at ' + index)
+ 
+    
+end
+        
+
+% imshow(test);
+
 % Threshold  (based on distance)
 
 
