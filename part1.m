@@ -19,7 +19,3 @@ if(length(eyeLocation) >= 2 && length(mouthLocation) >= 1)
         end %finish
     end
 end
-
-
-
-
