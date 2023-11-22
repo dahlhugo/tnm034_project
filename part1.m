@@ -22,7 +22,7 @@ YCrCb = convertRGB2YCrCb(image);
 
 eyeLocation = eyeDetection(YCrCb);
 
-mouthLocation = mouthDetection(YCrCb, contour, area);
+mouthLocation = mouthDetection(YCrCb, i);
 
     if(faceConfirmation(eyeLocation, mouthLocation) == 1)
         %if yes

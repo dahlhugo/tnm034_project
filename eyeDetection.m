@@ -1,13 +1,14 @@
 function EyeMap = eyeDetection(YCrCb)
 
 % Chrominance component calculation
+Y = double(YCrCb(:,:,1));
 Cb = double(YCrCb(:,:,2));
 Cr = double(YCrCb(:,:,3));
 
 % Normalize (Cb^2), (Cr^2), and (Cb/Cr) in the range [0; 255]
-Cb2_norm = normalize(Cb.^2);
-Cb2_255_norm = normalize((Cb.^2)-255);
-CbCr_norm = normalize(Cb./Cr);
+Cb2_norm = normalize(Cb.^2, 'range');
+Cb2_255_norm = normalize(((Cb.^2)-255), 'range');
+CbCr_norm = normalize((Cb./Cr), 'range');
 
 % Chrominance map
 EyeMapC = (1/3) * (Cb2_norm + Cb2_255_norm + CbCr_norm);
@@ -34,4 +35,4 @@ erosionY = imerode(Y, g_sigma);
 EyeMapL = dilationY./(erosionY + 1);
 
 EyeMap = EyeMapC * EyeMapL;
-
+end
