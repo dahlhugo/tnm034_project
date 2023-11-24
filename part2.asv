@@ -70,8 +70,7 @@ end
 
 %% To classify - smallest distance 
 
-% test = imread('.\DB2\test2.jpg');
-test = imread('.\DB0\DB0\test.jpg');
+test = imread('.\DB2\test2.jpg');
 testImage = im2gray(test);
 testImage = im2double(testImage);
 testImage = reshape(testImage, [], 1);
@@ -88,7 +87,7 @@ for i = 1:4
     
     if temp < E
         E = temp
-        index = i;
+        index = i
     end
     
 end
@@ -100,8 +99,7 @@ if E >= threshold
         disp('no match found')
         
 else
-    disp('match found at ');
-    disp(index)
+    disp('match found at ' + index)
  
     
 end
