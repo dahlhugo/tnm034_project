@@ -16,7 +16,15 @@ function skinMask = skinDetection(RGB, YCrCb)
     
 % 90<Y<180, 90<Cr<130, 80<Cb<150 from "An Efficient Face Detection in Color Images Using
 %Eye Mouth Triangular Approach"
-skinMask = (R > 95) & (G > 40) & (B > 20) & (R > G) & (R > B) & ((80 < Cb) < 150) & ((90 < Y) < 180)& (abs(R - G) > 15) & (diffForR > 135) & (diffForG > 135) & (diffForB > 135) & ((80 < Cr) < 130) & (Cb > 85) & (Cr <= ((1.5862 * Cb) + 20)) & (Cr >= ((0.3448 * Cb) + 76.2069)) & (Cr <= ((-1.15 * Cb) + 301.75));
+skinMask = (R > 95) & (G > 40) & (B > 20) & (R > G) & (R > B) & () & (abs(R - G) > 15) & (diffForR > 135) & (diffForG > 135) & (diffForB > 135) & ((80 < Cr) < 130) & (Cb > 85) & (Y > 80) & (Cr <= ((1.5862 * Cb) + 20)) & (Cr >= ((0.3448 * Cb) + 76.2069)) & (Cr <= ((-1.15 * Cb) + 301.75));
+%     (Cb > 85) & (Y > 80) & ...
+%     (Cr <= ((1.5862 * Cb) + 20)) & ...
+%     (Cr >= ((0.3448 * Cb) + 76.2069)) & ...
+%     (Cr >= ((-4.5652 * Cb) + 234.5652)) & ... -----> Ger problem i koden!
+%     (Cr <= ((-1.15 * Cb) + 301.75)) & ...
+%     (Cr >= ((-2.2857 * Cb) + 432.85)); -----> Ger också problem 
+
+    
     
     % Check if there are any ones in the skinMask
     if any(skinMask(:))
@@ -37,15 +45,15 @@ skinMask = (R > 95) & (G > 40) & (B > 20) & (R > G) & (R > B) & ((80 < Cb) < 150
 %         (YCrCb(:,:,2) >= -4.5652 * YCrCb(:,:,3) + 234.5652) & ...
 %         (YCrCb(:,:,2) <= -1.15 * YCrCb(:,:,3) + 301.75) & ...
 %         (YCrCb(:,:,2) >= -2.2857 * YCrCb(:,:,3) + 432.85);
+    
+    
+    %skinMask = uint8(skinMask);
 
     % Creates a structuring element. https://www.mathworks.com/help/images/structuring-elements.html
     % disk = the shape, 5 = radius of 5 pixels
-    se = strel('disk', 2);
+    %se = strel('disk', 5);
     %skinMask = imopen(skinMask, se);    % Erosion followed by dilation
     %skinMask = imclose(skinMask, se);   % Dilation followed by erosion 
-    
-    
-    skinMask = imdilate(skinMask, se);
     
     % Creating a contour with the exterior boundaries of the object. https://se.mathworks.com/help/images/ref/bwboundaries.html
     %contour = bwboundaries(skinMask);

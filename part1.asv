@@ -7,7 +7,6 @@ allImages = cell(1, numel(files));
 modifiedImages = cell(1, numel(files));
 eyeMaps = cell(1, numel(files));
 mouthMaps = cell(1, numel(files));
-skinMaps = cell(1, numel(files));
 skinEyeMaps = cell(1, numel(files));  % Added for storing combined skin and eye maps
 
 figure;
@@ -44,8 +43,7 @@ for i = 1:numel(files)
     mouthEyeMap = mouthMap & eyeMap;
     mouthEyeMaps{i} = mouthEyeMap;
     
-    % Store the skin mapping
-    skinMaps{i} = skinMask; 
+    % Store 
 
     % Initialize modImage to the original image
     modImage = RGB;
@@ -82,7 +80,7 @@ for i = 1:numel(files)
 
     % Display the skin mask
     subplot(3, 3, 5);
-    imshow(skinMaps{i});
+    imshow(skinMask);
     title('Skin Mask');
 
     % Display the combined skin and eye map
