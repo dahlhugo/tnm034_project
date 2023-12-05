@@ -1,4 +1,4 @@
-function [contour, area] = skinDetection(RGB, YCrCb)
+function skinMask = skinDetection(RGB, YCrCb)
 
     R = RGB(:,:,1);
     G = RGB(:,:,2);
@@ -15,6 +15,7 @@ function [contour, area] = skinDetection(RGB, YCrCb)
         (YCrCb(:,:,2) >= -4.5652 * YCrCb(:,:,3) + 234.5652) & ...
         (YCrCb(:,:,2) <= -1.15 * YCrCb(:,:,3) + 301.75) & ...
         (YCrCb(:,:,2) >= -2.2857 * YCrCb(:,:,3) + 432.85);
+
     % Creates a structuring element. https://www.mathworks.com/help/images/structuring-elements.html
     % disk = the shape, 5 = radius of 5 pixels
     se = strel('disk', 5);
@@ -22,10 +23,10 @@ function [contour, area] = skinDetection(RGB, YCrCb)
     skinMask = imclose(skinMask, se);   % Dilation followed by erosion 
     
     % Creating a contour with the exterior boundaries of the object. https://se.mathworks.com/help/images/ref/bwboundaries.html
-    contour = bwboundaries(skinMask);
+    %contour = bwboundaries(skinMask);
     
     % regionprops can return "Area", "Centroid", and "BoundingBox". Here we
     % are interested in the area of each connected region
-    regionProperties = regionprops(skinMask, 'Area'); % Area of each connected region
-    area = [regionProperties.Area]; %
+    %regionProperties = regionprops(skinMask, 'Area'); % Area of each connected region
+    %area = [regionProperties.Area]; %
 end
