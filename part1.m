@@ -1,5 +1,5 @@
 %folder = '/Users/sebastianlindgren/Documents/Fork_Projects/tnm034_project/DB1';
-folder = 'C:/Users/mahon/Aboben/DB1';
+folder = './DB1';
 files = dir(fullfile(folder, '*.jpg'));
 
 % Initialize cell arrays to hold images, eye maps, and mouth maps
