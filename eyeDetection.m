@@ -1,4 +1,4 @@
-function EyeMap = eyeDetection(YCrCb)
+function EyeMapThresholded = eyeDetection(YCrCb)
 
     % Chrominance component calculation
     Y = double(YCrCb(:,:,1));
@@ -36,5 +36,9 @@ function EyeMap = eyeDetection(YCrCb)
     EyeMapL = dilationY ./ (erosionY + eps);
 
     EyeMap = EyeMapC .* EyeMapL;
+
+    threshold = 0.5; % Adjust as needed
+    EyeMapThresholded = (EyeMap > threshold) .* EyeMap;
+
 
 end
