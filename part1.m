@@ -1,4 +1,3 @@
-%folder = '/Users/sebastianlindgren/Documents/Fork_Projects/tnm034_project/DB1';
 folder = './DB1';
 files = dir(fullfile(folder, '*.jpg'));
 
@@ -8,6 +7,7 @@ modifiedImages = cell(1, numel(files));
 eyeMaps = cell(1, numel(files));
 mouthMaps = cell(1, numel(files));
 skinMaps = cell(1, numel(files));
+combinedMaps = cell(1, numel(files));
 skinEyeMaps = cell(1, numel(files));  % Added for storing combined skin and eye maps
 
 figure;
@@ -40,12 +40,20 @@ for i = 1:numel(files)
     mouthMap = mouthDetection(YCrCb);
     mouthMaps{i} = mouthMap;
 
-    % Combine skin mask with eye map using logical AND ???????
-    mouthEyeMap = mouthMap & eyeMap;
-    mouthEyeMaps{i} = mouthEyeMap;
+    % Combine eye mask with mouth map (maps in binary) 
+    combinedMap_eye_mouth = eyeMap + mouthMap;
+    mouthEyeMaps{i} = combinedMap_eye_mouth;
     
     % Store the skin mapping
-    skinMaps{i} = skinMask; 
+    skinImage = image; 
+    skinImage(repmat(~skinMask, [1, 1, size(image, 3)])) = 0; % for removing stuff besides the skin in the og image
+    skinMaps{i} = skinImage;
+    
+    
+    % Combine all maps into one map of the face
+    skinmask_in = imcomplement(skinMask); % complement of the skinMap
+    combinedMap = combinedMap_eye_mouth - skinmask_in;
+    combinedMaps{i} = combinedMap; 
 
     % Initialize modImage to the original image
     modImage = RGB;
@@ -85,10 +93,10 @@ for i = 1:numel(files)
     imshow(skinMaps{i});
     title('Skin Mask');
 
-    % Display the combined skin and eye map
+    % Display the combined skin, mouth and eye map
     subplot(3, 3, 6);
-    imshow(mouthEyeMaps{i});
-    title('Skin and Eye Map');
+    imshow(combinedMaps{i});
+    title('Skin, mouth and Eye Map');
 
     % Add a pause to display the images
     pause(2);
