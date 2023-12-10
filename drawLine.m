@@ -1,11 +1,10 @@
 function modImage = drawLine(RGB, combinedMap)
-    % Convert combinedMap to a binary image
+    % Find the lighter pixels in the map
     binaryMap = combinedMap > 0.5;
 
-    % Find coordinates of white pixels
+    % Go thorugh the rows and cols.
     [row, col] = find(binaryMap);
 
-    % Initialize modImage to the original image
     modImage = RGB;
 
     % Draw crosses on the RGB image

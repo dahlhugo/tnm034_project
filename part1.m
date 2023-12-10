@@ -1,7 +1,7 @@
 folder = './DB1';
 files = dir(fullfile(folder, '*.jpg'));
 
-% Initialize cell arrays to hold images, eye maps, and mouth maps
+% Initialize cell arrays
 allImages = cell(1, numel(files));
 modifiedImages = cell(1, numel(files));
 eyeMaps = cell(1, numel(files));
@@ -16,13 +16,9 @@ for i = 1:numel(files)
     filename = fullfile(folder, files(i).name);
     image = imread(filename);
     
-    % Store the original image in the cell array
     allImages{i} = image;
     
     RGB = allImages{i};
-
-    % Now, allImages is a cell array containing all the original images
-    % Access individual original images using allImages{1}, allImages{2} ...
 
     YCrCb = ConvertRGB2YCrCb(RGB);
 
@@ -44,61 +40,56 @@ for i = 1:numel(files)
     combinedMap_eye_mouth = eyeMap + mouthMap;
     mouthEyeMaps{i} = combinedMap_eye_mouth;
     
-    % Store the skin mapping
+    % Store the skin map
     skinImage = image; 
     skinImage(repmat(~skinMask, [1, 1, size(image, 3)])) = 0; % for removing stuff besides the skin in the og image
     skinMaps{i} = skinImage;
-    
     
     % Combine all maps into one map of the face
     skinmask_in = imcomplement(skinMask); % complement of the skinMap
     combinedMap = combinedMap_eye_mouth - skinmask_in;
     combinedMaps{i} = combinedMap; 
-
-    % Initialize modImage to the original image
-    modImage = RGB;
-
     
-        % If yes, perform modifications and store the modified image
-        %modImage = drawLine(RGB, eyeLocation, mouthLocation);
-        modImage = drawLine(RGB, combinedMap);
+    % Modified image
+    modImage = RGB;
+    modImage = drawLine(RGB, combinedMap);
 
-    % Store the modified image in the cell array
+    % Store modified image in cell array
     modifiedImages{i} = modImage;
 end
 
-% Display original, modified images, eye maps, and mouth maps side by side
+% Display images
 for i = 1:numel(files)
-    % Create a 4x3 subplot grid
+    % 4x3 subplot grid
     subplot(4, 3, 1);
     imshow(allImages{i});
     title('Original Image');
 
-    % Display the eye map
+    % Display eye map
     subplot(4, 3, 2);
     imshow(eyeMaps{i});
     title('Eye Map');
 
-    % Display the mouth map
+    % Display mouth map
     subplot(4, 3, 3);
     imshow(mouthMaps{i});
     title('Mouth Map');
 
-    % Display the skin mask
+    % Display skin mask
     subplot(4, 3, 4);
     imshow(skinMaps{i});
     title('Skin Mask');
 
-    % Display the combined skin, mouth, and eye map
+    % Display the combined map
     subplot(4, 3, 5);
     imshow(combinedMaps{i});
     title('Skin, Mouth and Eye Map');
 
-    % Add a subplot for the modified image with the red crosses
+    % Display modified image with the red crosses
     subplot(4, 3, 6);
     imshow(modifiedImages{i});
     title('Modified Image with Red Crosses');
 
-    % Add a pause to display the images
+    % Add a pause between each image
     pause(2);
 end
