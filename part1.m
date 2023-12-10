@@ -58,10 +58,10 @@ for i = 1:numel(files)
     % Initialize modImage to the original image
     modImage = RGB;
 
-    if (faceConfirmation(eyeLocation, mouthLocation) == 1)
+    
         % If yes, perform modifications and store the modified image
-        modImage = drawLine(RGB, eyeLocation, mouthLocation);
-    end 
+        %modImage = drawLine(RGB, eyeLocation, mouthLocation);
+        modImage = drawLine(RGB, combinedMap);
 
     % Store the modified image in the cell array
     modifiedImages{i} = modImage;
@@ -69,34 +69,35 @@ end
 
 % Display original, modified images, eye maps, and mouth maps side by side
 for i = 1:numel(files)
-    % Create a 3x3 subplot grid
-    subplot(3, 3, 1);
+    % Create a 4x3 subplot grid
+    subplot(4, 3, 1);
     imshow(allImages{i});
     title('Original Image');
 
-    subplot(3, 3, 2);
-    imshow(modifiedImages{i});
-    title('Modified Image');
-
     % Display the eye map
-    subplot(3, 3, 3);
+    subplot(4, 3, 2);
     imshow(eyeMaps{i});
     title('Eye Map');
 
     % Display the mouth map
-    subplot(3, 3, 4);
+    subplot(4, 3, 3);
     imshow(mouthMaps{i});
     title('Mouth Map');
 
     % Display the skin mask
-    subplot(3, 3, 5);
+    subplot(4, 3, 4);
     imshow(skinMaps{i});
     title('Skin Mask');
 
-    % Display the combined skin, mouth and eye map
-    subplot(3, 3, 6);
+    % Display the combined skin, mouth, and eye map
+    subplot(4, 3, 5);
     imshow(combinedMaps{i});
-    title('Skin, mouth and Eye Map');
+    title('Skin, Mouth and Eye Map');
+
+    % Add a subplot for the modified image with the red crosses
+    subplot(4, 3, 6);
+    imshow(modifiedImages{i});
+    title('Modified Image with Red Crosses');
 
     % Add a pause to display the images
     pause(2);
