@@ -19,74 +19,47 @@ for i = 1:numel(files)
     allImages{i} = image;
     
     RGB = allImages{i};
+    YCrCb = ConvertRGB2YCrCb(RGB); 
 
-    YCrCb = ConvertRGB2YCrCb(RGB);
+    skinMask = skinDetection(RGB, YCrCb); 
 
-    skinMask = skinDetection(RGB, YCrCb);
-
-    eyeLocation = eyeDetection(YCrCb);
-
-    mouthLocation = mouthDetection(YCrCb);
-
-    % Store the eye map
     eyeMap = eyeDetection(YCrCb);
-    eyeMaps{i} = eyeMap;
-
-    % Store the mouth map
     mouthMap = mouthDetection(YCrCb);
-    mouthMaps{i} = mouthMap;
 
-    % Combine eye mask with mouth map (maps in binary) 
-    combinedMap_eye_mouth = eyeMap + mouthMap;
-    mouthEyeMaps{i} = combinedMap_eye_mouth;
-    
-    % Store the skin map
-    skinImage = image; 
-    skinImage(repmat(~skinMask, [1, 1, size(image, 3)])) = 0; % for removing stuff besides the skin in the og image
-    skinMaps{i} = skinImage;
-    
     % Combine all maps into one map of the face
     skinmask_in = imcomplement(skinMask); % complement of the skinMap
-    combinedMap = combinedMap_eye_mouth - skinmask_in;
-    combinedMaps{i} = combinedMap; 
+    eyeSkinMap = eyeMap - skinmask_in;
+    mouthSkinMap = mouthMap - skinmask_in;
+    eyeMaps{i} = eyeMap;
+    mouthMaps{i} = mouthMap;
+    skinEyeMaps{i} = eyeSkinMap;
+   
+    % Insert markers into the image
+    [leftEyePos, rightEyePos, mouthPos, detectionSuccess] = drawLine(eyeSkinMap, mouthSkinMap);
     
-    % Modified image
-    modImage = RGB;
-    modImage = drawLine(RGB, combinedMap);
+    % Concatenate eye and mouth positions into a 2D array
+    markerPositions = [leftEyePos; rightEyePos; mouthPos];
+    
+    RGB = insertMarker(RGB, markerPositions, 'color', 'yellow', 'size', 15);
 
     % Store modified image in cell array
-    modifiedImages{i} = modImage;
+    modifiedImages{i} = RGB;
 end
 
 % Display images
 for i = 1:numel(files)
-    % 4x3 subplot grid
-    subplot(4, 3, 1);
-    imshow(allImages{i});
-    title('Original Image');
-
-    % Display eye map
-    subplot(4, 3, 2);
+    % Display the combined skin eyemap
+    subplot(1, 3, 1);
     imshow(eyeMaps{i});
     title('Eye Map');
 
-    % Display mouth map
-    subplot(4, 3, 3);
+    % Display the combined skin mouthmap
+    subplot(1, 3, 2);
     imshow(mouthMaps{i});
     title('Mouth Map');
 
-    % Display skin mask
-    subplot(4, 3, 4);
-    imshow(skinMaps{i});
-    title('Skin Mask');
-
-    % Display the combined map
-    subplot(4, 3, 5);
-    imshow(combinedMaps{i});
-    title('Skin, Mouth and Eye Map');
-
     % Display modified image with the red crosses
-    subplot(4, 3, 6);
+    subplot(1, 3, 3);
     imshow(modifiedImages{i});
     title('Modified Image with Red Crosses');
 

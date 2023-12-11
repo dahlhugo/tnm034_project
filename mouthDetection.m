@@ -9,7 +9,11 @@ function mouthMap = mouthDetection(YCrCb)
 
     % Make it binary.
     mouthMapFormula = (mouthMapFormula - min(mouthMapFormula(:))) / (max(mouthMapFormula(:)) - min(mouthMapFormula(:)));
-    threshold = 0.5; % Can be tweaked
+    threshold = 0.4; % Can be tweaked
+    
     mouthMap = mouthMapFormula > threshold;
+    SE = strel('disk', 10);
+    mouthMap = imclose(mouthMap, SE);
+    mouthMap = imclearborder(mouthMap);
 
 end

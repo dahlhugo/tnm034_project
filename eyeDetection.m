@@ -13,32 +13,23 @@ function EyeMapThresholded = eyeDetection(YCrCb)
     EyeMapC = (1/3) * (Cb2_norm + Cb2_255_norm + CbCr_norm);
 
     % Luminance component calculation
-
-    % 7 x 7 kernel (didn't seem to work so went with se instead)
-    %g_sigma = [0.7498, 1.1247, 1.4996, 1.8745, 1.4996, 1.1247, 0.7498;
-    %      1.1247, 1.4996, 1.8745, 2.2494, 1.1875, 1.4996, 1.1247;
-    %       1.4996, 1.8745, 2.2494, 2.6243, 2.2494, 1.8745, 1.4996;
-    %       1.8745, 2.2494, 2.6243, 2.9992, 2.6343, 2.2494, 1.8745;
-    %       1.4996, 1.8745, 2.2494, 2.6243, 2.2494, 1.8745, 1.4996;
-    %       1.1247, 1.4996, 1.8745, 2.2494, 1.8745, 1.4996, 1.1247;
-    %       0.7498, 1.1247, 1.4996, 1.8745, 1.4996, 1.1247, 0.7498];
-
-    % Normalize kernel
-    %g_sigma = g_sigma / sum(g_sigma(:));
-    
     radius = 10;  
     se = strel('disk', radius);
     % Apply the kernel, here se, to the luminance component
     dilationY = imdilate(Y, se);
     erosionY = imerode(Y, se);
-
+    
     % Luminance map
-    EyeMapL = dilationY ./ (erosionY + eps);
+    EyeMapL = dilationY ./ (erosionY + 1);
 
-    EyeMap = EyeMapC .* EyeMapL;
+    EyeMap = EyeMapL .* EyeMapC;
 
-    threshold = 0.5; % Tweak if needed, 0.5 worked fine
-    EyeMapThresholded = (EyeMap > threshold) .* EyeMap;
+    threshold = 0.3; % Tweak if needed, 0.5 worked fine
+    EyeMapThresholded = (EyeMap > threshold);
 
-
+    EyeMapThresholded = imdilate(EyeMapThresholded, se);
+    EyeMapThresholded = imdilate(EyeMapThresholded, se);
+    EyeMapThresholded = imerode(EyeMapThresholded, se);
+    EyeMapThresholded = imdilate(EyeMapThresholded, se);
+    EyeMapThresholded = imerode(EyeMapThresholded, se);
 end
