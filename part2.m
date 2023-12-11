@@ -50,7 +50,7 @@ end
 % [V,D] = eig(C);
 
 %% Finding weight (for every eigenface)
-W =  CalculateWeights(eigenVecs,  diff, K, dsLength);
+W =  CalculateWeights(eigenVecs,  diff);
 
 % W = zeros(K, dsLength);
 % for j = 1:dsLength   

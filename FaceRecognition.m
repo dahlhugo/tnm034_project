@@ -20,6 +20,6 @@ if E >= threshold
 end
 
 foundIndex = index;
-distanceDifference = E;
+distanceDifference = E
 
 end
