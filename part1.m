@@ -3,12 +3,17 @@ files = dir(fullfile(folder, '*.jpg'));
 
 % Initialize cell arrays
 allImages = cell(1, numel(files));
-modifiedImages = cell(1, numel(files));
+modifiedImages = cell(1, numel(files)); % includes the alignment
 eyeMaps = cell(1, numel(files));
 mouthMaps = cell(1, numel(files));
 skinMaps = cell(1, numel(files));
 combinedMaps = cell(1, numel(files));
 skinEyeMaps = cell(1, numel(files));  % Added for storing combined skin and eye maps
+
+% Global variabel 
+image = imread(fullfile(folder, files(3).name)); % random choosen image
+referenceSize = size(image);
+referenceSize = referenceSize(1:2);
 
 figure;
 
@@ -53,9 +58,12 @@ for i = 1:numel(files)
     % Modified image
     modImage = RGB;
     modImage = drawLine(RGB, combinedMap);
-
-    % Store modified image in cell array
-    modifiedImages{i} = modImage;
+    
+    % Align image to a reference image chosen by us
+    align_image = alignment(modImage, ref_coord, target_coord, referenceSize);
+    
+    % Store modified (and alined) image in cell array
+    modifiedImages{i} = align_image;
 end
 
 % Display images
@@ -86,9 +94,9 @@ for i = 1:numel(files)
     title('Skin, Mouth and Eye Map');
 
     % Display modified image with the red crosses
-    subplot(4, 3, 6);
-    imshow(modifiedImages{i});
-    title('Modified Image with Red Crosses');
+%     subplot(4, 3, 6);
+%     imshow(modifiedImages{i});
+%     title('Modified Image with Red Crosses');
 
     % Add a pause between each image
     pause(2);
