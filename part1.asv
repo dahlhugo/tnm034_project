@@ -4,17 +4,30 @@ files = dir(fullfile(folder, '*.jpg'));
 % Initialize cell arrays
 allImages = cell(1, numel(files));
 modifiedImages = cell(1, numel(files));
+simplemodifiImages = cell(1, numel(files));
 eyeMaps = cell(1, numel(files));
 mouthMaps = cell(1, numel(files));
 skinMaps = cell(1, numel(files));
 combinedMaps = cell(1, numel(files));
 skinEyeMaps = cell(1, numel(files));  % Added for storing combined skin and eye maps
 
+% Global var for reference image - testr for alignment function 
+filename = fullfile(folder, files(2).name);
+refIm =  imread(filename);
+referenceSize = size(refIm);
+referenceSize = referenceSize(1:2);
+dummyEyeMap = [];
+dummyMouthMap = [];
+
 figure;
 
 for i = 1:numel(files)
     filename = fullfile(folder, files(i).name);
     image = imread(filename);
+
+    % Size of current image in folder (for alignment function)
+    imageSize = size(image);
+    imageSize = imageSize(1:2);
     
     image_corr = colorCorrectionRGB(image);
     allImages{i} = image_corr; % save corrected image to array
@@ -47,17 +60,24 @@ for i = 1:numel(files)
          continue; % Skip to the next iteration
     end
 
-    markerPositions = [leftEyePos; rightEyePos; mouthPos];
+    % alignment for the eyes (stright line) of every image and update
+    % coordiantes
 
-    RGB = insertMarker(RGB, markerPositions, 'color', 'red', size = 20);
     
+    
+    [rotatedImage, updatedLeftEyePos, updatedRightEyePos, updatedMouthPos] = rotateImage(RGB, leftEyePos, rightEyePos, mouthPos);
 
+    % Draws the markings on the image
+    markerPositions = [updatedLeftEyePos; updatedRightEyePos; updatedMouthPos];
+    rotatedImage = insertMarker(rotatedImage, markerPositions, 'color', 'red', size = 20);
+   
     %Store modified image in cell array
-    modifiedImages{i} = RGB;
+    modifiedImages{i} = rotatedImage;
 end
 
 % Display images
 for i = 1:numel(files)
+
     % % Display the combined skin eyemap
     % subplot(2, 3, 1);
     % imshow(eyeMaps{i});
@@ -69,9 +89,18 @@ for i = 1:numel(files)
     % title('Mouth Map');
 
     % Display modified image with the red crosses
-    %subplot(2, 3, 3);
+    subplot(1, 3, 3);
+    imshow(modifiedImages{i});
+    title('Modified Rotated and translated Image with Red Crosses');
+
+    % Display modified image with the red crosses
+    subplot(2, 3, 3);
     imshow(modifiedImages{i});
     title('Modified Image with Red Crosses');
+
+    % subplot(4, 5, i);
+    % imshow(modifiedImages{i});
+    % title(['Image ' num2str(i)]);
 
     % Add a pause between each image
     pause(1);
