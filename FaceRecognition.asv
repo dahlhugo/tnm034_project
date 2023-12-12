@@ -1,5 +1,5 @@
 function [foundIndex, distanceDifference] = FaceRecognition(inFace, Weights)
-index = 1;
+index = 0;
 E = 9000;
 for i = 1:dsLength
     
@@ -13,7 +13,7 @@ for i = 1:dsLength
 end
 
 
-threshold = 155;
+threshold = 1550000000000;
 % Might need to be changed depending on other images of the same person
 if E >= threshold
         index = 0;

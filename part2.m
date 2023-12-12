@@ -81,7 +81,7 @@ end
 
 %% To classify - smallest distance 
 
- test = imread('./DB2/test2.jpg');
+test = imread('DB1/db/res.jpg');
 %test = imread('./DB0/DB0/test.jpg');
 testImage = im2gray(test);
 testImage = im2double(testImage);
@@ -121,7 +121,7 @@ inW = FindWeight(testImage, meanFace, EigenFaces);
 if(foundIndex == 0)
     disp('No match found')
 else
-    disp('Match found at index ' + foundIndex)
+    disp('Match found at index '); disp(int2str(foundIndex));
 end
 
 % imshow(test);

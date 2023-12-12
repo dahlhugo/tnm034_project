@@ -5,5 +5,12 @@ function [EigenFaces, Weights] = CalculateEigenFaces(eigenVecs,  diff)
         EigenFaces(:, i) = EigenFaces(:, i)/norm(EigenFaces(:,i));
     end
 
-    Weights = mtimes (EigenFaces', diff);
+    weights = mtimes(EigenFaces', diff);
+    
+    %normalize weights
+    weights_sum = sum(weights, 1);
+    normalized_weights = bsxfun(@rdivide, weights, weights_sum);
+
+    Weights = normalized_weights;
+
 end

@@ -13,7 +13,7 @@ for i = 1:numOfImgs
 end
 
 
-threshold = 155;
+threshold = 155000000;
 % Might need to be changed depending on other images of the same person
 if E >= threshold
         index = 0;
