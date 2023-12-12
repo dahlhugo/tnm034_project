@@ -33,7 +33,9 @@ while hasdata (ds)
 end
 
 % Find eigenvectors and diff
-[eigenVecs, diff] = CalculateEigenVectors(imVec,K, dsLength);
+[eigenVecs, diff, meanFace] = CalculateEigenVectors(imVec,K, dsLength);
+
+
 
 % meanFace = (1/K)* sum(imVec, 2);
 % 
@@ -50,7 +52,7 @@ end
 % [V,D] = eig(C);
 
 %% Finding weight (for every eigenface)
-W =  CalculateWeights(eigenVecs,  diff);
+[EigenFaces, W] =  CalculateEigenFaces(eigenVecs,  diff);
 
 % W = zeros(K, dsLength);
 % for j = 1:dsLength   
@@ -79,16 +81,16 @@ W =  CalculateWeights(eigenVecs,  diff);
 
 %% To classify - smallest distance 
 
-% test = imread('.\DB2\test2.jpg');
-test = imread('./DB0/DB0/test.jpg');
+ test = imread('./DB2/test2.jpg');
+%test = imread('./DB0/DB0/test.jpg');
 testImage = im2gray(test);
 testImage = im2double(testImage);
 testImage = reshape(testImage, [], 1);
 
- inW = testImage(:, 1);
+inW = FindWeight(testImage, meanFace, EigenFaces);
 
 
- [foundIndex, distanceDifference] = FaceRecognition(inW, W, dsLength);
+[foundIndex, distanceDifference] = FaceRecognition(inW, W, dsLength);
 
 % index = 1;
 % E = 9000;
@@ -125,6 +127,20 @@ end
 % imshow(test);
 
 % Threshold  (based on distance)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

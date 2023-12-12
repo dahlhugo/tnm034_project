@@ -1,4 +1,4 @@
-function [eigenVecs, diff] =  CalculateEigenVectors(imVec, K, numOfImgs)
+function [eigenVecs, diff, meanFace] =  CalculateEigenVectors(imVec, K, numOfImgs)
     meanFace = (1/K)* sum(imVec, 2);
     
     % Subtract mean for each vector
@@ -11,8 +11,6 @@ function [eigenVecs, diff] =  CalculateEigenVectors(imVec, K, numOfImgs)
     % C = cov(diff);
     C = mtimes(diff', diff);
     % Find the best eigenvectors 
-    [V,~] = eig(C);
-
-    eigenVecs = V;
+    [eigenVecs,~] = eig(C);
 
 end

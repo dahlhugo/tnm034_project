@@ -1,0 +1,3 @@
+EigenMatrix = reshape(EigenFaces, [250, 250, 4]);
+
+EigenMatrix = rescale(EigenMatrix, )
