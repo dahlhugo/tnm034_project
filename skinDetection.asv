@@ -1,65 +1,109 @@
-function skinMask = skinDetection(RGB, YCrCb)
+function skinMask = skinDetection(image_corr)
 
-    R = RGB(:,:,1);
-    G = RGB(:,:,2);
-    B = RGB(:,:,3);
-    
+    YCrCb = ConvertRGB2YCrCb(image_corr); 
+
+
+    R = image_corr(:,:,1);
+    G = image_corr(:,:,2);
+    B = image_corr(:,:,3);
+
     Y = YCrCb(:,:,1);
     Cb = YCrCb(:,:,2);
     Cr = YCrCb(:,:,3);
     
-    %fprintf('Cr: min=%d, max=%d\n', min(Cr(:)), max(Cr(:)));
-    
     diffForR = (max(R(:)) - min(R(:)));
     diffForG = (max(G(:)) - min(G(:)));
     diffForB = (max(B(:)) - min(B(:)));
-    
-% 90<Y<180, 90<Cr<130, 80<Cb<150 from "An Efficient Face Detection in Color Images Using
-%Eye Mouth Triangular Approach"
-skinMask = (R > 95) & (G > 40) & (B > 20) & (R > G) & (R > B) & () & (abs(R - G) > 15) & (diffForR > 135) & (diffForG > 135) & (diffForB > 135) & ((80 < Cr) < 130) & (Cb > 85) & (Y > 80) & (Cr <= ((1.5862 * Cb) + 20)) & (Cr >= ((0.3448 * Cb) + 76.2069)) & (Cr <= ((-1.15 * Cb) + 301.75));
-%     (Cb > 85) & (Y > 80) & ...
-%     (Cr <= ((1.5862 * Cb) + 20)) & ...
-%     (Cr >= ((0.3448 * Cb) + 76.2069)) & ...
-%     (Cr >= ((-4.5652 * Cb) + 234.5652)) & ... -----> Ger problem i koden!
-%     (Cr <= ((-1.15 * Cb) + 301.75)) & ...
-%     (Cr >= ((-2.2857 * Cb) + 432.85)); -----> Ger också problem 
 
+    %F -----------------------------------------------------
+    % %Create the binary mask
+    % zeroMask = zeros(size(Cr));
+    % faceCol = zeroMask(1,:);
+    % faceRows = zeroMask(:,1);
+    % faceMask = zeros(size(zeroMask));
+    % 
+    % %Set value to 1 if ceritain interval of Cb and Cr
+    % for i = 1:length(faceRows)
+    %     for j = 1:length(faceCol)
+    %         if Cr(i,j) < 0.7 && Cr(i,j) > 0.6 && Cb(i,j) < 0.70 && Cb(i,j) > 0.4
+    %             faceMask(i,j) = 1;
+    %         else
+    %             faceMask(i,j) = 0;
+    %         end
+    %     end
+    % end
+    % 
+    % %Morphological operations to remove blobs
+    % SE = strel('disk',8);
+    % faceMask = imdilate(faceMask, SE);
+    % faceMask = imdilate(faceMask, SE);
+    % %faceMask = imdilate(faceMask, SE);
+    % skinMask = imerode(faceMask, SE);
     
-    
-    % Check if there are any ones in the skinMask
+    %D -----------------------------------------------------
+    % % Transform to hsv color space
+    % image_corr = double(image_corr); 
+    % img_hsv = rgb2hsv(image_corr);
+    % 
+    % [H,S,V] = imsplit(img_hsv); 
+    % [w,h] = size(image_corr(:,:,1)); 
+    % for i=1:w
+    %     for j=1:h
+    %         if((H(i,j) < 30/360 || H(i,j) > 250/360) && S(i,j) < 0.52 && V(i,j) > 0.5)
+    %             mask(i,j) = 1;
+    %         else
+    %             mask(i,j) = 0; 
+    %         end
+    %     end
+    % end
+    % 
+    % %Morphological operations to remove blobs
+    % SE = strel('disk',8);
+    % SE2 = strel('disk', 3);
+    % mask = imerode(mask, SE);
+    % 
+    % while(bweuler(mask) ~= 1)
+    %     mask = imerode(mask, SE2);
+    %     mask = imdilate(mask, SE);
+    %     mask = imerode(mask, SE2);
+    %     %disp("One iteration")
+    % end
+    % 
+    % SE3 = strel('rectangle', [20, 40]);
+    % mask = imerode(mask, SE3);
+    % 
+    % im(:,:,1)=image_corr(:,:,1).*mask;   
+    % im(:,:,2)=image_corr(:,:,2).*mask; 
+    % im(:,:,3)=image_corr(:,:,3).*mask;
+    % skinMask = imbinarize(im(:,:,1)); 
+
+    %EGEN -----------------------------------------------------
+    %90<Y<180, 90<Cr<130, 80<Cb<150 from "An Efficient Face Detection in Color Images Using
+    %Eye Mouth Triangular Approach"
+    skinMask = (R > 100) & (G > 50) & (B > 50) & (R > G) & (R > B) & ...
+            (95 < Cb) & (Cb < 172) & (Y < 180) & ...
+            (abs(R - G) > 15) & (diffForR > 135) & (diffForG > 135) & (diffForB > 135) & ...
+            (100 < Cr) & (Cr < 150) & (Cb > 80) & ...
+            (Cr <= (1.5862 * Cb + 20)) & (Cr >= (0.3448 * Cb + 76.2069)) & ...
+            (Cr <= (-1.15 * Cb + 301.75));
+
+    %Check if there are any ones (1 = skin) in the skinMask
     if any(skinMask(:))
         disp('At least one pixel classified as skin (white) in the skin mask.');
     else
         disp('No pixels classified as skin in the skin mask.');
     end
-    
-    
-    % ... is used to break line without breaking without breaking code.
-    % Creating a binary mask with the conditions for skin used in the paper.
 
-%    skinMask = (R > 95) & (G > 40) & (B > 20) & (R > G) & (R > B) & ...
-%        (abs(R - G) > 15) & ((max(R, max(G, B)) - min(R, min(G, B))) > 135);% & ...
-%         (YCrCb(:,:,2) > 135) & (YCrCb(:,:,3) > 85) & (YCrCb(:,:,1) > 80) & ...
-%         (YCrCb(:,:,2) <= 1.5862 * YCrCb(:,:,3) + 20) & ...
-%         (YCrCb(:,:,2) >= 0.3448 * YCrCb(:,:,3) + 76.2069) & ...
-%         (YCrCb(:,:,2) >= -4.5652 * YCrCb(:,:,3) + 234.5652) & ...
-%         (YCrCb(:,:,2) <= -1.15 * YCrCb(:,:,3) + 301.75) & ...
-%         (YCrCb(:,:,2) >= -2.2857 * YCrCb(:,:,3) + 432.85);
+    %Creates a structuring element. https://www.mathworks.com/help/images/structuring-elements.html
+    %disk = the shape, 3 = radius of 3 pixels
+    se = strel('disk', 5); 
+    se2 = strel('disk', 2);
+    skinMask = imdilate(skinMask, se);
+    skinMask = imdilate(skinMask, se);
+    skinMask = imdilate(skinMask, se);
+    skinMask = imerode(skinMask, se);
+    skinMask = imfill(skinMask, 'holes');
+    skinMask = imdilate(skinMask, se2);
+    skinMask = imerode(skinMask, se);
     
-    
-    %skinMask = uint8(skinMask);
-
-    % Creates a structuring element. https://www.mathworks.com/help/images/structuring-elements.html
-    % disk = the shape, 5 = radius of 5 pixels
-    %se = strel('disk', 5);
-    %skinMask = imopen(skinMask, se);    % Erosion followed by dilation
-    %skinMask = imclose(skinMask, se);   % Dilation followed by erosion 
-    
-    % Creating a contour with the exterior boundaries of the object. https://se.mathworks.com/help/images/ref/bwboundaries.html
-    %contour = bwboundaries(skinMask);
-    
-    % regionprops can return "Area", "Centroid", and "BoundingBox". Here we
-    % are interested in the area of each connected region
-    %regionProperties = regionprops(skinMask, 'Area'); % Area of each connected region
-    %area = [regionProperties.Area]; %
 end
