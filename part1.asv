@@ -107,11 +107,11 @@ for i = 1:numel(files)
     title('Modified Rotated and translated Image with Red Crosses');
 
     % Add a pause between each image
-    %pause(3);
+    pause(3);
 end
 
 % Specify the subfolder name
-subfolderName = 'skinEyeMap';
+subfolderName = 'modImages';
 
 % Create the subfolder if it doesn't exist
 subfolderPath = fullfile(folder, subfolderName);
@@ -120,12 +120,13 @@ if ~exist(subfolderPath, 'dir')
 end
 
 % Save modified images to the subfolder
+for i = 1:numel(files)
     % Extract the filename (without extension) from the original image filename
     [~, baseFileName, ~] = fileparts(files(1).name);
     
     % Specify the full path for saving the modified image
-    savePath = fullfile(subfolderPath, [baseFileName, '_skinEyeMap.jpg']);
+    savePath = fullfile(subfolderPath, [baseFileName, '_modified.jpg']);
     
     % Save the modified image
-    imwrite(skinEyeMaps{1}, savePath);
+    imwrite(modifiedImages{i}, savePath);
 
