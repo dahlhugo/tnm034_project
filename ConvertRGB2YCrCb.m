@@ -1,25 +1,30 @@
-function YCrCb = ConvertRGB2YCrCb(RGB)
-    red = RGB(:,:,1);
-    green = RGB(:,:,2);
-    blue = RGB(:,:,3);
+function YCrCb = convertRGB2YCrCb(rgb)
+    % Function for normalizing the rgb color 
+    % and converting it to YCrCb color space
 
-    r_mean = 1/mean(red(:));
-    g_mean = 1/mean(green(:));
-    b_mean = 1/mean(blue(:));
+    r = rgb(:,:,1);
+    g = rgb(:,:,2);
+    b = rgb(:,:,3);
 
-    maxRGB = max(max(r_mean,g_mean),b_mean);
+    % Calculate the inverse means of each color channel
+    meanR = 1/mean(r(:));
+    meanG = 1/mean(g(:));
+    meanB = 1/mean(b(:));
 
-    %normalize
+    maxRGB = max(max(meanR,meanG),meanB);
 
-    r_mean = r_mean/maxRGB;
-    g_mean = g_mean/maxRGB;
-    b_mean = b_mean/maxRGB;
+    % Normalize each inverse mean
+    meanR = meanR/maxRGB;
+    meanG = meanG/maxRGB;
+    meanB = meanB/maxRGB;
 
-    red = red * r_mean;
-    green = green * g_mean;
-    blue = blue * b_mean;
+    % Scale each color channel by its normalized mean    
+    r = r * meanR;
+    g = g * meanG;
+    b = b * meanB;
 
-    RGB = cat(3, red,green,blue);
+    rgb = cat(3, r,g,b);
 
-    YCrCb = rgb2ycbcr(RGB);
+    YCrCb = rgb2ycbcr(rgb);
+    
 end
