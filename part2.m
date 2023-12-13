@@ -2,7 +2,7 @@ clear
 clc
 
 location = './DB1/DB1/db/*.jpg';       %  folder in which your images exists
-ds = imageDatastore(location)         %  Creates a datastore for all images in your folder
+ds = imageDatastore(location);         %  Creates a datastore for all images in your folder
 
 
 
@@ -51,6 +51,7 @@ end
 % % Find the best eigenvectors 
 % [V,D] = eig(C);
 
+
 %% Finding weight (for every eigenface)
 [EigenFaces, W] =  CalculateEigenFaces(eigenVecs,  diff);
 
@@ -59,6 +60,11 @@ end
 %     W(:,j) = eigenVecs(:,j)' * diff(j,:)';
 % end
 %%
+
+% 1. x - meanFace : func(img, meanFace) return diff
+% 2. calculate meanFace(arr(imgs)) return meanface
+% 3. pca() return index
+
 % colormap gray
 % imagesc(reshape(meanFace, [250, 250]))
 % 
