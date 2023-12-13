@@ -1,11 +1,14 @@
 function [leftEyePos, rightEyePos, mouthPos] = drawLine(eyeMap, mouthMap)
 
-    % Detect eyes
+    % Find and count connected components in eyeMap
     CC = bwconncomp(eyeMap);
+    % Measures properties for each connected component 
+    % in CC, which is a structure returned by bwconncomp
     statsEye = regionprops(CC, 'PixelList');
     
+    % Makes sure image do not contain less stan 2 eyes
     if numel(statsEye) < 2
-        % Insufficient eye regions detected
+        % Insufficient eye regions detected, return empty array
         leftEyePos = [];
         rightEyePos = [];
         mouthPos = [];
@@ -13,14 +16,23 @@ function [leftEyePos, rightEyePos, mouthPos] = drawLine(eyeMap, mouthMap)
     end
     
     % Sort eyes based on x-coordinates
+    % cellfun applys function to every cell in the array
+    % It calculates the mean of x-coordinates for each 
+    % connected component's PixelList and sorts the result 
+
+    % The '~' is used to discard the sorted values, as only the indices are needed
     [~, sortedIdxEyes] = sort(cellfun(@(x) mean(x(:, 1)), {statsEye.PixelList}));
+    
+    % Returns the number of elements in the statsEye array
     statsEye = statsEye(sortedIdxEyes);
     
-    % Assuming there are two eyes
+    % Assuming there are two eyes, 
+    % Calculate the mean position of pixels for 
+    % the first and second connected components
     leftEyePos = mean(statsEye(1).PixelList);
     rightEyePos = mean(statsEye(2).PixelList);
     
-    % Detect mouth
+    % Find and count connected components in mouthMap
     CC = bwconncomp(mouthMap);
     statsMouth = regionprops(CC, 'PixelList');
     
@@ -34,63 +46,4 @@ function [leftEyePos, rightEyePos, mouthPos] = drawLine(eyeMap, mouthMap)
     
     % Assuming there is one mouth
     mouthPos = mean(statsMouth(1).PixelList);
-    
-
-    % Besse 
-    %eyeMap = logical(eyeMap);
-    % 
-    % % Get eye candidates
-    % statsEye = regionprops('table', eyeMap, 'centroid', 'MaxFeretProperties');
-    % eyeCentroids = cat(1, statsEye.Centroid);
-    % [m, ~] = size(eyeCentroids);
-    % 
-    % if m < 2
-    %     % Insufficient eyes found
-    %     return;
-    % end
-    % 
-    % % Get mouth candidates
-    % statsMouth = regionprops('table', mouthMap, 'centroid', 'MaxFeretProperties');
-    % mouCentroids = cat(1, statsMouth.Centroid);
-    % [m, ~] = size(mouCentroids);
-    % 
-    % if m == 0
-    %      % No mouth found
-    %     return;
-    % end
-    % 
-    % % Set the y-distance threshold max and min
-    % yDistanceThresholdMax = 200;
-    % yDistanceThresholdMin = 100;
-    % 
-    % % Set additional constraints
-    % maxAngleLeft = -50; % Maximum allowed angle to the left of the mouth
-    % maxAngleRight = 50; % Maximum allowed angle to the right of the mouth
-    % 
-    % % Detect the eyes
-    % 
-    % % Find left eye
-    % [~, leftEyeIdx] = min(eyeCentroids(:, 1));
-    % leftEyePos = eyeCentroids(leftEyeIdx, :);
-    % 
-    % % Find right eye
-    % eyeCentroids(leftEyeIdx, :) = [];  % Remove left eye
-    % [~, rightEyeIdx] = max(eyeCentroids(:, 1));
-    % rightEyePos = eyeCentroids(rightEyeIdx, :);
-    % 
-    % % Check if the eyes are at the desired y-distance from the mouth
-    % if (abs(leftEyePos(2) - mouCentroids(2)) < yDistanceThresholdMax && ...
-    %    abs(leftEyePos(2) - mouCentroids(2)) > yDistanceThresholdMin && ...
-    %    abs(rightEyePos(2) - mouCentroids(2)) < yDistanceThresholdMax && ...
-    %    abs(rightEyePos(2) - mouCentroids(2)) > yDistanceThresholdMin && ...
-    %    leftEyePos(1) < mouCentroids(1) + maxAngleRight && ...
-    %    leftEyePos(1) > mouCentroids(1) - maxAngleLeft && ...
-    %    rightEyePos(1) < mouCentroids(1) + maxAngleRight && ...
-    %    rightEyePos(1) > mouCentroids(1) - maxAngleLeft)
-    % 
-    %     detectionSuccess = true;
-    % end
-    % 
-    % % Return the mouth position
-    % mouthPos = mouCentroids;
 end
