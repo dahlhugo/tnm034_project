@@ -24,12 +24,19 @@ function EyeMapThresholded = eyeDetection(YCrCb)
 
     EyeMap = EyeMapL .* EyeMapC;
 
-    threshold = 0.3; % Tweak if needed, 0.5 worked fine
-    EyeMapThresholded = (EyeMap > threshold);
-
+    threshold = 0.34; % Tweak if needed, 0.5 worked fine
+    EyeMapThresholded = (EyeMap >= threshold);
+    
+    EyeMapThresholded = imclearborder(EyeMapThresholded);
     EyeMapThresholded = imdilate(EyeMapThresholded, se);
     EyeMapThresholded = imdilate(EyeMapThresholded, se);
     EyeMapThresholded = imerode(EyeMapThresholded, se);
+    EyeMapThresholded = imclearborder(EyeMapThresholded);
     EyeMapThresholded = imdilate(EyeMapThresholded, se);
     EyeMapThresholded = imerode(EyeMapThresholded, se);
+    EyeMapThresholded = imclearborder(EyeMapThresholded);
+    EyeMapThresholded = imdilate(EyeMapThresholded, se);
+    EyeMapThresholded = imerode(EyeMapThresholded, se);
+    EyeMapThresholded = imclearborder(EyeMapThresholded);
+    
 end
