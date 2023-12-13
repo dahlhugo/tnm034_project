@@ -1,6 +1,6 @@
 function [foundIndex, distanceDifference] = FaceRecognition(inFace, Weights, numOfImgs)
 index = 1;
-E = 10000000000;
+E = 2;
 for i = 1:numOfImgs
     
     temp = norm(inFace - Weights(:, i));
