@@ -1,4 +1,8 @@
-function imgWeight = FindWeight(imgVec, meanFace, eigenFaces)
+function imgWeight = FindWeight(image, meanFace, eigenFaces)
+    image = im2gray(image);
+    image = im2double(image);
+    imgVec = reshape(image, [], 1);
+    
     faceDiff = imgVec - meanFace;
 
     imgWeight = mtimes(eigenFaces', faceDiff);

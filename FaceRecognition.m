@@ -3,23 +3,23 @@ index = 1;
 E = 10000000000;
 for i = 1:numOfImgs
     
-    temp = norm(inFace - Weights(:, i))
+    temp = norm(inFace - Weights(:, i));
     
     if temp < E
-        E = temp
+        E = temp;
         index = i;
     end
     
 end
 
 
-threshold = 155000000;
+threshold = 0.11;
 % Might need to be changed depending on other images of the same person
 if E >= threshold
         index = 0;
 end
 
 foundIndex = index;
-distanceDifference = E
+distanceDifference = E;
 
 end

@@ -1,4 +1,4 @@
-function YCrCb = convertRGB2YCrCb(rgb)
+function YCrCb = ConvertRGB2YCrCb(rgb)
     % Function for normalizing the rgb color 
     % and converting it to YCrCb color space
 
