@@ -1,5 +1,5 @@
-function mouthMap = mouthDetection(YCrCb)
-   
+function mouthMap2 = mouthDetection2(YCrCb)
+
     Cb = double(YCrCb(:,:,2));
     Cr = double(YCrCb(:,:,3));
 
@@ -9,25 +9,26 @@ function mouthMap = mouthDetection(YCrCb)
 
     % Make it binary.
     mouthMapFormula = (mouthMapFormula - min(mouthMapFormula(:))) / (max(mouthMapFormula(:)) - min(mouthMapFormula(:)));
-    threshold = 0.4; % Can be tweaked
+    threshold = 0.5; % Can be tweaked
     
-    mouthMap = mouthMapFormula > threshold;
-    SE = strel('disk', 10);
-    mouthMap = imclose(mouthMap, SE);
-    mouthMap = imclearborder(mouthMap);
+    mouthMap2 = mouthMapFormula > threshold;
+    SE = strel('disk', 11);
+    mouthMap2 = imclose(mouthMap2, SE);
+    mouthMap2 = imclose(mouthMap2, SE);
+    %mouthMap2 = imclearborder(mouthMap2);
 
     % Remove small and large regions from the binary mask
-    minArea = 50; % Adjust as needed
-    maxArea = 2000; % Adjust as needed
+    minArea = 100; % Adjust as needed
+    maxArea = 7000; % Adjust as needed
 
-    mouthMap = bwareaopen(mouthMap, minArea);
-    mouthMap = bwareafilt(mouthMap, [minArea, maxArea]);
+    mouthMap2 = bwareaopen(mouthMap2, minArea);
+    mouthMap2 = bwareafilt(mouthMap2, [minArea, maxArea]);
 
-        % Get image dimensions
-    [height, width] = size(mouthMap);
+    % Get image dimensions
+    [height, width] = size(mouthMap2);
 
     % Label connected components in the binary mask
-    labeledMask = bwlabel(mouthMap);
+    labeledMask = bwlabel(mouthMap2);
 
     % Remove regions outside the specified range
     for i = 1:max(labeledMask(:))
@@ -36,13 +37,14 @@ function mouthMap = mouthDetection(YCrCb)
         centroidY = regionProperties.Centroid(2);
 
         % Define ranges for the middle-bottom of the image (adjust as needed)
-        middleRangeX = [width*0.3, width*0.7];
-        middleRangeY = [height*0.6, height*0.8];
+        middleRangeX = [0, width];
+        middleRangeY = [height*0.7, height];
 
         % Check if the centroid is outside the middle-bottom range
         if centroidX < middleRangeX(1) || centroidX > middleRangeX(2) || ...
            centroidY < middleRangeY(1) || centroidY > middleRangeY(2)
-            mouthMap(labeledMask == i) = 0;
+            mouthMap2(labeledMask == i) = 0;
         end
     end
+   
 end

@@ -1,4 +1,4 @@
-function EyeMapThresholded = eyeDetection(YCrCb)
+function EyeMap2 = eyeDetection2(YCrCb)
 
     % Chrominance component calculation
     Y = double(YCrCb(:,:,1));
@@ -13,8 +13,9 @@ function EyeMapThresholded = eyeDetection(YCrCb)
     EyeMapC = (1/3) * (Cb2_norm + Cb2_255_norm + CbCr_norm);
 
     % Luminance component calculation
-    radius = 9; % 9 is the smallest it can be
+    radius = 9; 
     se = strel('disk', radius);
+    
     % Apply the kernel, here se, to the luminance component
     dilationY = imdilate(Y, se);
     erosionY = imerode(Y, se);
@@ -24,27 +25,27 @@ function EyeMapThresholded = eyeDetection(YCrCb)
 
     EyeMap = EyeMapL .* EyeMapC;
 
-    threshold = 0.3; % Tweak if needed, 0.5 worked fine
-    EyeMapThresholded = (EyeMap > threshold);
+    threshold = 0.38; % Tweak if needed, 0.5 worked fine
+    EyeMap2 = (EyeMap > threshold);
 
-    EyeMapThresholded = imdilate(EyeMapThresholded, se);
-    EyeMapThresholded = imdilate(EyeMapThresholded, se);
-    EyeMapThresholded = imerode(EyeMapThresholded, se);
-    EyeMapThresholded = imdilate(EyeMapThresholded, se);
-    EyeMapThresholded = imerode(EyeMapThresholded, se);
+    EyeMap2 = imdilate(EyeMap2, se);
+    EyeMap2 = imdilate(EyeMap2, se);
+    EyeMap2 = imerode(EyeMap2, se);
+    EyeMap2 = imdilate(EyeMap2, se);
+    EyeMap2 = imerode(EyeMap2, se);
 
     % Remove small and large regions from the binary mask
-    minArea = 100; % Adjust as needed
-    maxArea = 3000; % Adjust as needed
+    minArea = 10; % Adjust as needed
+    maxArea = 7000; % Adjust as needed
 
-    EyeMapThresholded = bwareaopen(EyeMapThresholded, minArea);
-    EyeMapThresholded = bwareafilt(EyeMapThresholded, [minArea, maxArea]);
+    EyeMap2 = bwareaopen(EyeMap2, minArea);
+    EyeMap2 = bwareafilt(EyeMap2, [minArea, maxArea]);
 
     % Get image dimensions
-    [height, width] = size(EyeMapThresholded);
+    [height, width] = size(EyeMap2);
 
     % Label connected components in the binary mask
-    labeledMask = bwlabel(EyeMapThresholded);
+    labeledMask = bwlabel(EyeMap2);
 
     % Remove regions outside the specified range
     for i = 1:max(labeledMask(:))
@@ -53,13 +54,13 @@ function EyeMapThresholded = eyeDetection(YCrCb)
         centroidY = regionProperties.Centroid(2);
 
         % Define ranges for the middle of the image (adjust as needed)
-        middleRangeX = [width*0.2, width*0.7];
-        middleRangeY = [height*0.4, height*0.5];
+        middleRangeX = [width*0.1, width*0.9];
+        middleRangeY = [height*0.1, height*0.5];
 
         % Check if the centroid is outside the middle range
         if centroidX < middleRangeX(1) || centroidX > middleRangeX(2) || ...
            centroidY < middleRangeY(1) || centroidY > middleRangeY(2)
-            EyeMapThresholded(labeledMask == i) = 0;
+            EyeMap2(labeledMask == i) = 0;
         end
     end
    
