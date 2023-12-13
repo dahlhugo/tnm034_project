@@ -36,7 +36,8 @@ function [leftEyePos, rightEyePos, mouthPos] = drawLine(eyeMap, mouthMap)
     mouthPos = mean(statsMouth(1).PixelList);
     
 
-    % %eyeMap = logical(eyeMap);
+    % Besse 
+    %eyeMap = logical(eyeMap);
     % 
     % % Get eye candidates
     % statsEye = regionprops('table', eyeMap, 'centroid', 'MaxFeretProperties');

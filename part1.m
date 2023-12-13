@@ -11,6 +11,9 @@ skinMaps = cell(1, numel(files));
 combinedMaps = cell(1, numel(files));
 skinEyeMaps = cell(1, numel(files));  % Added for storing combined skin and eye maps
 
+% New initialize cell arrays
+eyeMaps2 = cell(1, numel(files));
+mouthMaps2 = cell(1, numel(files));
 
 figure;
 
@@ -53,45 +56,56 @@ for i = 1:numel(files)
          continue; % Skip to the next iteration
     end
 
-    % test for alignment diff - OG
-    markerPositions1 = [leftEyePos; rightEyePos; mouthPos];
-    RGB = insertMarker(RGB, markerPositions1, 'color', 'blue', size = 20);
+    % alignment for the eyes (stright line) of every image and crops image
+    % into [400, 300] size
+    rotatedImage = rotateImage(RGB, leftEyePos, rightEyePos);
 
-    % alignment for the eyes (stright line) of every image and update
-    % coordiantes - FUNCTION DOES NOT WORK
-    [rotatedImage, updatedLeftEyePos, updatedRightEyePos, updatedMouthPos] = rotateImage(RGB, leftEyePos, rightEyePos, mouthPos);
+    % Calc the locations of the eye and mouth coordinates again
+    fixedImage = ConvertRGB2YCrCb(rotatedImage);
 
-    % Draws the markings on the image
+    % Secound eyedetection for gathering the new coordinates after rotation
+    eyeMap2 = eyeDetection2(fixedImage);
+    mouthMap2 = mouthDetection2(fixedImage);
+
+    eyeMaps2{i} = eyeMap2;
+    mouthMaps2{i} = mouthMap2;
+
+    %  % ONLY FOR DEBUGGING! Check if the eyes are approximately horizontal
+    % horizontalThreshold = 0.2; 
+    % areEyesHorizontal = abs(leftEyePos(2) - rightEyePos(2)) < horizontalThreshold;
+    % 
+    % if ~areEyesHorizontal
+    %     disp('Eyes are not horizontal.');
+    %     abs(leftEyePos(2) - rightEyePos(2))
+    % end
+    
+    % Markings on the output image for debugging
+    [updatedLeftEyePos, updatedRightEyePos, updatedMouthPos] = drawLine(eyeMap2, mouthMap2);
     markerPositions = [updatedLeftEyePos; updatedRightEyePos; updatedMouthPos];
-    rotatedImage = insertMarker(rotatedImage, markerPositions, 'color', 'red', size = 20);
-   
+    endImage = insertMarker(rotatedImage, markerPositions, 'color', 'red', size = 20);
+    
     %Store modified image in cell array
-    modifiedImages{i} = RGB;
-    modifiedImages{i} = rotatedImage;
+    modifiedImages{i} = endImage;
 end
 
 % Display images
-for i = 1:4
+for i = 1:numel(files)
 
-    % % Display the combined skin eyemap
-    % subplot(2, 3, 1);
-    % imshow(eyeMaps{i});
-    % title('Eye Map');
-    % 
-    % % Display the combined skin mouthmap
-    % subplot(2, 3, 2);
-    % imshow(mouthMaps{i});
-    % title('Mouth Map');
+    % Display the combined skin eyemap
+    subplot(2, 3, 1);
+    imshow(eyeMaps{i});
+    title('Eye Map');
+    
+    % Display the combined skin mouthmap
+    subplot(2, 3, 2);
+    imshow(mouthMaps{i});
+    title('Mouth Map');
 
     % Display modified image with the red crosses
-    % subplot(2, 3, 1);
-    % imshow(modifiedImages{i});
-    % title('Modified Rotated and translated Image with Red Crosses');
-
-    subplot(2, 2, i);
+    subplot(2, 3, 3);
     imshow(modifiedImages{i});
-    title(['Image ' num2str(i)]);
+    title('Modified Rotated and translated Image with Red Crosses');
 
     % Add a pause between each image
-    pause(1);
+    pause(3);
 end
