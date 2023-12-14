@@ -14,8 +14,6 @@ function modifyDB1Images()
     eyeMaps2 = cell(1, numel(files));
     mouthMaps2 = cell(1, numel(files));
     
-    figure;
-    
     for i = 1:numel(files)
         % Read and store image 
         filename = fullfile(folder, files(i).name);
@@ -42,7 +40,7 @@ function modifyDB1Images()
         % DON'T COMMENT OUT - WILL CRASH! (image 12 has no left eye) % 
         if isempty(leftEyePos) || isempty(rightEyePos) || isempty(mouthPos)
              % Handle the case where positions are empty or detection failed
-             disp(['Processing failed for image ', num2str(i)]);
+             %disp(['Processing failed for image ', num2str(i)]);
              continue; % Skip to the next iteration
         end
     

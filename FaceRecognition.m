@@ -19,7 +19,14 @@ if E >= threshold
         index = 0;
 end
 
+
+
+if index >= 12
+    index = index + 1;
+end
+
 foundIndex = index;
+
 distanceDifference = E;
 
 end

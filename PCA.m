@@ -28,18 +28,20 @@ end
 
 testImage = ImageProcessing(testImagePath);
 
+if testImage == 0
+    foundIndex = 0;
+    return
+end
+
+
+
 testWeight = FindWeight(testImage, meanFace, EigenFaces);
 
 
 [foundIndex, distanceDifference] = FaceRecognition(testWeight, W, nrOfImages);
 
+disp(distanceDifference)
 
-        
-% if(foundIndex == 0)
-%     disp('No match found')
-% else
-%     disp('Match found at index '); disp(int2str(foundIndex));
-% end
 end
 
 
