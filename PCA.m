@@ -3,7 +3,7 @@ function foundIndex = PCA(testImagePath, modifiedImages)
 modifiedImages(:, 12) = [];
 nrOfImages = size(modifiedImages, 2);
 
-[w, h, rgb] = size(modifiedImages{1});
+[w, h, ~] = size(modifiedImages{1});
 
 columnLength = w*h;
 
@@ -38,9 +38,7 @@ end
 testWeight = FindWeight(testImage, meanFace, EigenFaces);
 
 
-[foundIndex, distanceDifference] = FaceRecognition(testWeight, W, nrOfImages);
-
-disp(distanceDifference)
+[foundIndex, ~] = FaceRecognition(testWeight, W, nrOfImages);
 
 end
 
